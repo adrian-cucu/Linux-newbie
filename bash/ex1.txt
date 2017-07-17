@@ -1,0 +1,3 @@
+
+Scrieti secventa de comenzi prin care se citeste de la tastatura
+si se valideaza un sir format din maxim 2 litere.

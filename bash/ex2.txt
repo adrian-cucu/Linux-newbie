@@ -1,0 +1,5 @@
+
+Scrieti secventa de comenzi prin care se citeste un sir de caractere 
+de la tastatura si apoi se verifica daca acesta reprezinta un nume 
+de fisier obisnuit din directorul curent. Sirul va fi introdus
+ca parametru din linia de comanda.

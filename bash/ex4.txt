@@ -1,0 +1,4 @@
+
+Scrieti secventa de comenzi prin care se citeste un sir de caractere
+si apoi se verifica daca acesta reprezinta un nume de subdirector
+din directorul curent. Sirul va fi introdus ca parametru in linia de comanda.

@@ -1,0 +1,4 @@
+
+Scrieti secventa de comenzi prin care se citeste si se valideaza 
+un numar de maxim 2 cifre diferite de 1. Citirea sirului se face
+cu comanda read.

@@ -1,0 +1,3 @@
+
+Scrieti secventa de comenzi prin care se citeste un nume de fisier, 
+si se verifica daca acesta exista in directorul /tmp.

@@ -1,0 +1,3 @@
+
+Scrieti secventa de comenzi prin care se citeste de la tastatura
+numele unui utilizator si se verifica daca el este conectat.
