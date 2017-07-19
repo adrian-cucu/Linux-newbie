@@ -1,8 +1,14 @@
 
-default:  test
+CC = gcc
+RM = rm -rf
+
+default:  test.out
 
 test.out: test.o
-	gcc $^ -o $@
+	$(CC) $^ -o $@
 
 test.o: test.c
-	gcc -c $^
+	$(CC) -c $^
+
+clean:
+	$(RM) *.out *.o
