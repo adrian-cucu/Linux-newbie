@@ -2,7 +2,7 @@
 default:  test
 
 test.out: test.o
-	gcc test.o -o test.out
+	gcc $^ -o $@
 
 test.o: test.c
-	gcc -c test.c
+	gcc -c $^
