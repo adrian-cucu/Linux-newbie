@@ -32,31 +32,33 @@ Crapa-i-ar capul caprei
 #include <signal.h>
 
 #define BUF_SIZE 512
-#define MAX_LINE 255  /*Lungimea maxima de caractere pe o linie a fisierului*/
+/*Lungimea maxima de caractere pe o linie a fisierului 
+nu trebuie sa depaseasca lungimea bufereului */
+
+#define ROSU 		"\033[31m"
+#define VERDE 		"\033[32m"
+#define ALBASTRU 	"\033[34m"
+#define INCOLOR 	"\033[00m"
 
 
 int main(int argc, char** argv) 
 {	
 	int fd;
-	char *fis;
-	char *cuv;
-	char buf[BUF_SIZE + 1];
-	char line_buf[MAX_LINE + 1];
-	char *lbuf_pos;
-	char *p1;
-	char *p2;
-	char *c;
+	char *fisier, *cuvant, *inceput_linie, *sfarsit_linie, *c;
+	char buf[BUF_SIZE + 1], *buf_start;
+	int buf_size;
 	int nbytes;
+	int lungime_linie;
 
 	if (argc < 3) {
 		fprintf	(stderr, "usage %s: <nume fisier> <cuvant cautat>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	fis = argv[1];
-	cuv = argv[2];
+	fisier = argv[1];
+	cuvant = argv[2];
 
-	if ((fd = open(fis, O_RDONLY)) == -1) {
+	if ((fd = open(fisier, O_RDONLY)) == -1) {
 		perror("open");		
 		exit(EXIT_FAILURE);
 	}
@@ -71,7 +73,7 @@ int main(int argc, char** argv)
 
 	/* Fisierul este gol */
 	if (nbytes == 0) {
-		fprintf(stderr, "0 octeti cititi din fisierul: %s \n", fis);
+		fprintf(stderr, "0 octeti cititi din fisierul: %s \n", fisier);
 		exit(EXIT_FAILURE);
 	}	
 
@@ -93,34 +95,44 @@ int main(int argc, char** argv)
 	  intre 2 ciitiri de blocuri succesive
 	  deci aceasta problema trebuie tratata
 	*/
-	lbuf_pos = line_buf;
-	while ((nbytes = read(fd, buf, BUF_SIZE)) > 0) {
+	buf_size = BUF_SIZE; 
+	buf_start = buf;
 
-		buf[nbytes] = '\0';
+	while ((nbytes = read(fd, buf_start, buf_size)) > 0) {
 
-		for (p1 = buf, p2 = p1; *p2; p1 = p2) {
-			while (*p2 && *p2 != '\n') {
-				++p2;
-			}		
+		buf_start[nbytes] = '\0';
+		inceput_linie = &buf[0];	
 
-			if (*p2 == '\n') {
-				*p2 = '\0';
-				strcpy(lbuf_pos, p1);	
+		while ( (sfarsit_linie = strchr(inceput_linie, '\n')) ) {
 
-				if ((c = strstr(line_buf, cuv))) {	
-					write(STDOUT_FILENO, line_buf, c - line_buf);	
-					printf("\033[33m%s\033[00m", cuv);
-					printf("%s\n", line_buf + (c - line_buf) + strlen(cuv));
-				}
-				lbuf_pos = line_buf;
-				++p2;
+			*sfarsit_linie = '\0';
+	
+			lungime_linie = sfarsit_linie - inceput_linie;
+						
+			/*Cautam in linia curenta cuvantul dat*/
+			c = strstr(inceput_linie, cuvant);	
+			
 
-			} else {
-				strcpy(lbuf_pos, p1);
-				lbuf_pos += (p2 - p1);
-			}	
-		}
+			if (c) {
+				write(STDOUT_FILENO, inceput_linie, c - inceput_linie);
+				write(STDOUT_FILENO, VERDE, sizeof(ROSU));		
+				write(STDOUT_FILENO, c, strlen(cuvant));
+				write(STDOUT_FILENO, INCOLOR, sizeof(INCOLOR));		
+				write(STDOUT_FILENO, c + strlen(cuvant), 
+					lungime_linie - ((c + strlen(cuvant)) - inceput_linie));
+				write(STDOUT_FILENO, "\n", 1);
+			}
+
+			inceput_linie = ++sfarsit_linie;
+		}		
+	
+		if (*inceput_linie) {
+			memcpy(buf, inceput_linie, lungime_linie);
+			buf_start = buf + lungime_linie;
+			buf_size = BUF_SIZE - lungime_linie;
+		}	
 	}
+	putchar('\n');
 	
 	return 0;
 }
